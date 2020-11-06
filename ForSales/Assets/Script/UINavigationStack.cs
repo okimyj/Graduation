@@ -64,22 +64,5 @@ public class UINavigationStack : AbstractSingleton<UINavigationStack>
 	public void UIShow(UIBase ui, bool show)
 	{
 		ui.gameObject.SetActive(show);
-		/*
-		UniversalAdditionalCameraData cData = Camera.main.GetUniversalAdditionalCameraData();
-		
-		for (int i = 0; i < ui.cameras.Length; ++i)
-		{
-			if (null != ui.cameras[i])
-			{
-				if (show)
-					cData.cameraStack.Add(ui.cameras[i]);
-				else
-				{
-					if (cData.cameraStack.Contains(ui.cameras[i]))
-						cData.cameraStack.Remove(ui.cameras[i]);
-				}
-			}
-		}
-		*/
 	}
 }

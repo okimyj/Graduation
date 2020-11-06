@@ -39,11 +39,3 @@ public class AbstractSingleton<Type> : MonoBehaviour
 	{
 	}
 }
-
-public class AbstractGlobalInstance<Type> : MonoBehaviour
-{
-	public static Type Get()
-	{
-		return (Type)(object)FindObjectOfType(typeof(Type));
-	}
-}

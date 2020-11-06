@@ -23,42 +23,14 @@ public class DataManager : AbstractSingleton<DataManager>
 			Debug.Log("strMtrlJson : " + strMtrlJson);
 			SerializationMap<string, MaterialData> serializationMap = JsonUtility.FromJson(strMtrlJson, typeof(SerializationMap<string, MaterialData>)) as SerializationMap<string, MaterialData>;
 			materialMap = serializationMap.ToDictionary();
-			foreach(KeyValuePair<string, MaterialData> kv in materialMap)
-			{
-				Debug.Log("key : " + kv.Key + " valule - id :" + kv.Value.id + " hasNum : " + kv.Value.hasNum + " useNum : " + kv.Value.useNum + " prime_cost : " + kv.Value.prime_cost);
-			}
 		}
-		else
-		{
-			/*
-			for (int i=0; i< 5; ++i)
-			{
-				MaterialData data = new MaterialData("재료" + i.ToString(), i * 100, 10, 0, i.ToString());
-				materialMap.Add(i.ToString(), data);
-				Debug.Log("i " + i + " : " + JsonUtility.ToJson(data));
-			}
-			string strJson = JsonUtility.ToJson(new SerializationMap<string, MaterialData>(materialMap));
-			Debug.Log("strJson : " + strJson);
-			*/
-		}
+		
 		productMap = new Dictionary<string, ProductData>();
 		string strProductJson = ReadData(KEY_PRODUCT_MAP);
 		if(!string.IsNullOrEmpty(strProductJson))
 		{
-			Debug.Log("strProductJson : " + strProductJson);
 			SerializationMap<string, ProductData> serializationMap = JsonUtility.FromJson(strProductJson, typeof(SerializationMap<string, ProductData>)) as SerializationMap<string, ProductData>;
 			productMap = serializationMap.ToDictionary();
-		}
-		else
-		{/*
-			Dictionary<string, int> mtrlMap = new Dictionary<string, int>();
-			mtrlMap.Add("1", 1);
-			mtrlMap.Add("3", 1);
-			ProductData data = new ProductData("상품1", mtrlMap, 100, 100, 1000, 500, 6000, 1, 3000);
-			productMap.Add("1", data);
-			string strJson = JsonUtility.ToJson(new SerializationMap<string, ProductData>(productMap));
-			Debug.Log("strJson : " + strJson);
-			*/
 		}
 	}
 	public Dictionary<string, ProductData> GetProductMap()
@@ -171,6 +143,7 @@ public class MaterialData
 [System.Serializable]
 public class ProductData : ISerializationCallbackReceiver
 {
+	public string id;
 	public string name;
 	public Dictionary<string, int> needMtrlMap = new Dictionary<string, int>();
 	[SerializeField]
@@ -180,21 +153,20 @@ public class ProductData : ISerializationCallbackReceiver
 
 	public int add_cost;
 	public float commission;
+	public int transfort;
 	public int transfort_customer;
-	public int transfort_me;
 	public int profit_per_hour;
-	public int need_hour;
+	public float need_hour;
 	public int final_sale_price;
 	public int sale_num;
-	public string id;
-	public ProductData(string name, Dictionary<string, int> needMtrlMap, int add_cost, float commission, int transfort_customer, int transfort_me, int profit_per_hour, int need_hour, int final_sale_price, string id = "")
+	public ProductData(string name, Dictionary<string, int> needMtrlMap, int add_cost, float commission, int transfort_customer, int transfort, int profit_per_hour, float need_hour, int final_sale_price, string id = "")
 	{
 		this.name = name;
 		this.needMtrlMap = needMtrlMap;
 		this.add_cost = add_cost;
 		this.commission = commission;
 		this.transfort_customer = transfort_customer;
-		this.transfort_me = transfort_me;
+		this.transfort = transfort;
 		this.profit_per_hour = profit_per_hour;
 		this.need_hour = need_hour;
 		this.final_sale_price = final_sale_price;
@@ -248,7 +220,7 @@ public class ProductData : ISerializationCallbackReceiver
 	public float GetCommissionCost()
 	{
 		int total_cost = GetTotalCost();
-		int profit_margin = profit_per_hour * need_hour;
+		int profit_margin = GetProfitMargin();
 		total_cost += profit_margin;
 		float _commission = commission * 0.01f;
 		float commision_cost = (total_cost - (total_cost * (1 - _commission))) / (1 - _commission);
@@ -262,11 +234,11 @@ public class ProductData : ISerializationCallbackReceiver
 	}
 	public int GetTransfortCost()
 	{
-		return transfort_customer - transfort_me;
+		return transfort - transfort_customer;
 	}
 	public int GetProfitMargin()
 	{
-		return profit_per_hour * need_hour;
+		return Mathf.CeilToInt(profit_per_hour * need_hour);
 	}
 	public int GetRecommendPrice()
 	{

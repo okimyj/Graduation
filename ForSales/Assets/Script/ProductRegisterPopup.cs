@@ -43,7 +43,7 @@ public class ProductRegisterPopup : UIBase
 		InputField_addCost.text = curProductData.add_cost.ToString();
 		InputField_commission.text = curProductData.commission.ToString();
 		InputField_transfort_customer.text = curProductData.transfort_customer.ToString();
-		InputField_transfort_me.text = curProductData.transfort_me.ToString();
+		InputField_transfort_me.text = curProductData.transfort.ToString();
 		InputField_final_price.text = curProductData.final_sale_price.ToString();
 		selectedMaterialDatas.Clear();
 		if (null != curProductData.needMtrlMap)
@@ -158,9 +158,9 @@ public class ProductRegisterPopup : UIBase
 		int add_cost = int.Parse(InputField_addCost.text);
 		int commission = int.Parse(InputField_commission.text);
 		int transfort_customer = int.Parse(InputField_transfort_customer.text);
-		int transfort_me = int.Parse(InputField_transfort_me.text);
+		int transfort = int.Parse(InputField_transfort_me.text);
 		int profit_per_hour = int.Parse(InputField_costPerHour.text);
-		int need_hour = int.Parse(InputField_useHour.text);
+		float need_hour = float.Parse(InputField_useHour.text);
 		int final_sale_price = int.Parse(InputField_final_price.text);
 		
 		curProductData.name = InputField_name.text;
@@ -168,7 +168,7 @@ public class ProductRegisterPopup : UIBase
 		curProductData.add_cost = add_cost;
 		curProductData.commission = commission;
 		curProductData.transfort_customer = transfort_customer;
-		curProductData.transfort_me = transfort_me;
+		curProductData.transfort = transfort;
 		curProductData.profit_per_hour = profit_per_hour;
 		curProductData.need_hour = need_hour;
 		curProductData.final_sale_price = final_sale_price;
@@ -191,8 +191,8 @@ public class ProductRegisterPopup : UIBase
 	{
 		if (null == curProductData)
 			return;
-		int value = 0;
-		int.TryParse(v, out value);
+		float value = 0;
+		float.TryParse(v, out value);
 		curProductData.need_hour = value;
 		RefreshRecommendPrice();
 	}
@@ -223,13 +223,13 @@ public class ProductRegisterPopup : UIBase
 		curProductData.transfort_customer= value;
 		RefreshRecommendPrice();
 	}
-	public void OnEndEditTransfortMe(string v)
+	public void OnEndEditTransfort(string v)
 	{
 		if (null == curProductData)
 			return;
 		int value = 0;
 		int.TryParse(v, out value);
-		curProductData.transfort_me= value;
+		curProductData.transfort = value;
 		RefreshRecommendPrice();
 	}
 	protected override void Awake()
@@ -243,7 +243,7 @@ public class ProductRegisterPopup : UIBase
 		InputField_addCost.onEndEdit.AddListener(OnEndEditAddCost);
 		InputField_commission.onEndEdit.AddListener(OnEndEditCommision);
 		InputField_transfort_customer.onEndEdit.AddListener(OnEndEditTransfortCustomer);
-		InputField_transfort_me.onEndEdit.AddListener(OnEndEditTransfortMe);
+		InputField_transfort_me.onEndEdit.AddListener(OnEndEditTransfort);
 		
 	}
 }
