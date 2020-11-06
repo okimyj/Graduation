@@ -28,7 +28,14 @@ public class MainUI : UIBase
 		}
 		ScrollView_products.AddCells(productCellDatas);
 	}
-	// Start is called before the first frame update
+	public void RecalcTotalProfit()
+	{
+		int total = 0;
+		Dictionary<string, ProductData> map = DataManager.Instance.GetProductMap();
+		foreach (KeyValuePair<string, ProductData> kv in map)
+			total += kv.Value.GetAccureProfit();
+		total_profit.text = string.Format("총 누적 수익 : {0}", Definitions.NumberFormatPrice(total));
+	}
 	public void TouchProductCellInScrollRect(UIScalingButton button)
 	{
 		ProductCell cellUI = (ProductCell)button.param;
@@ -76,25 +83,5 @@ public class MainUI : UIBase
 		ToggleProduct(toggle_product.isOn);
 		ToggleMtrl(toggle_product.isOn);
 	}
-	void Start()
-    {
-		/*
-		for (int i = 0; i < 5; ++i)
-			productCellDatas.Add(new ProductCell.CellData(string.Format("productName_{0}", i), i*500, i*100000, 0));
-		ScrollView_products.AddCells(productCellDatas);
-
-		List<string> cellStrList = new List<string>();
-		for (int i=0; i< productCellDatas.Count; ++i)
-		{
-			cellStrList.Add(JsonUtility.ToJson((ProductCell.CellData)productCellDatas[i]));
-		}
-		DataManager.SaveData(DataManager.KEY_PRODUCT_MAP, JsonUtility.ToJson(new DataManager.Serialization<string>(cellStrList)));
-		*/
-	}
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+	
 }

@@ -1131,7 +1131,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-  scalingTarget: {fileID: 6807096332462481433}
+  scalingTarget: {fileID: 0}
   originScale: {x: 1, y: 1, z: 1}
   pressedScale: {x: 0.9, y: 0.9, z: 0.9}
   scalingDuration: 0.05
