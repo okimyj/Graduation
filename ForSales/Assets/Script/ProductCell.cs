@@ -34,11 +34,13 @@ public class ProductCell : UIScrollCellBase
 	{
 		--cellData.sale_num;
 		cellData.sale_num = Mathf.Max(cellData.sale_num, 0);
+		cellData.Save();
 		Refresh();
 	}
 	public void TouchPlus(UIScalingButton button)
 	{
 		++cellData.sale_num;
+		cellData.Save();
 		Refresh();
 	}
 	
@@ -51,5 +53,4 @@ public class ProductCell : UIScrollCellBase
 		bt_minus.SetTouchedCallback(TouchMinus);
 		bt_plus.SetTouchedCallback(TouchPlus);
 	}
-	
 }

@@ -717,7 +717,7 @@ GameObject:
   - component: {fileID: 1427552611743377913}
   - component: {fileID: 8166812914620960388}
   - component: {fileID: 8562364476869278227}
-  - component: {fileID: 7067733499139459313}
+  - component: {fileID: 7290467898223685587}
   m_Layer: 5
   m_Name: ProductMaterialCell
   m_TagString: Untagged
@@ -797,14 +797,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd1dfd44e2709df49afb95ca75cf8f20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buttonComp: {fileID: 7067733499139459313}
+  buttonComp: {fileID: 7290467898223685587}
   mtrl_name: {fileID: 4386474694867814200}
   prime_cost: {fileID: 8493078485841371889}
   bt_remove: {fileID: 135464712421954102}
   bt_plus: {fileID: 1393071660997214849}
   bt_minus: {fileID: 5240267330945231260}
   need_num: {fileID: 5318015674186243606}
---- !u!114 &7067733499139459313
+--- !u!114 &7290467898223685587
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

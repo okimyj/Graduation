@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 using UnityEngine;
 
 public class DataManager : AbstractSingleton<DataManager>
@@ -11,7 +12,7 @@ public class DataManager : AbstractSingleton<DataManager>
 	[SerializeField]
 	Dictionary<string, ProductData> productMap;
 	bool isInit = false;
-	public void Init()
+	public override void _Init()
 	{
 		if (isInit)
 			return;
@@ -20,7 +21,6 @@ public class DataManager : AbstractSingleton<DataManager>
 		
 		if (!string.IsNullOrEmpty(strMtrlJson))
 		{
-			Debug.Log("strMtrlJson : " + strMtrlJson);
 			SerializationMap<string, MaterialData> serializationMap = JsonUtility.FromJson(strMtrlJson, typeof(SerializationMap<string, MaterialData>)) as SerializationMap<string, MaterialData>;
 			materialMap = serializationMap.ToDictionary();
 		}
@@ -120,25 +120,42 @@ public class SerializationMap<TKey, TValue> : ISerializationCallbackReceiver
 [System.Serializable]
 public class MaterialData
 {
+	public string id;
 	public string name;
 	public int prime_cost;
 	public int hasNum;
-	public int useNum;
-	public string id;
-	public int RemainNum { get { return hasNum - useNum; } }
-	
-	
+	public int RemainNum { get { return hasNum - GetUseNum(); } }
+	CallbackObject updatedCallback;
 	public MaterialData(string name, int prime_cost, int hasNum, int useNum, string id="")
 	{
 		this.name = name;
 		this.prime_cost = prime_cost;
 		this.hasNum = hasNum;
-		this.useNum = useNum;
 		if (string.IsNullOrEmpty(id))
 			id = System.DateTime.Now.ToFileTime().ToString();
 		this.id = id;
 	}
-
+	public void SetUpdatedCallback(CallbackObject callback)
+	{
+		updatedCallback = callback;
+	}
+	public int GetUseNum()
+	{
+		int use_num = 0;
+		Dictionary<string, ProductData> map = DataManager.Instance.GetProductMap();
+		foreach(KeyValuePair<string, ProductData> kv in map)
+		{
+			if (null == kv.Value.needMtrlMap)
+				continue;
+			foreach(KeyValuePair<string, int> kv2 in kv.Value.needMtrlMap)
+			{
+				if (kv2.Key == id)
+					use_num = use_num + kv2.Value;
+			}
+		}
+		return use_num;
+	}
+	
 }
 [System.Serializable]
 public class ProductData : ISerializationCallbackReceiver
@@ -159,6 +176,7 @@ public class ProductData : ISerializationCallbackReceiver
 	public float need_hour;
 	public int final_sale_price;
 	public int sale_num;
+	CallbackObject updatedCallback;
 	public ProductData(string name, Dictionary<string, int> needMtrlMap, int add_cost, float commission, int transfort_customer, int transfort, int profit_per_hour, float need_hour, int final_sale_price, string id = "")
 	{
 		this.name = name;
@@ -177,7 +195,10 @@ public class ProductData : ISerializationCallbackReceiver
 	}
 	public ProductData()
 	{
-
+	}
+	public void SetUpdatedCallback(CallbackObject callback)
+	{
+		updatedCallback = callback;
 	}
 	public void OnBeforeSerialize()
 	{
@@ -248,5 +269,11 @@ public class ProductData : ISerializationCallbackReceiver
 		float commision_cost = GetCommissionCost();
 		float final_cost = commision_cost + total_cost;
 		return Mathf.CeilToInt(final_cost);
+	}
+	public void Save()
+	{
+		DataManager.Instance.UpdateProductData(this);
+		if (null != updatedCallback)
+			updatedCallback(this);
 	}
 }

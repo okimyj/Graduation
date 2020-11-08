@@ -24,11 +24,13 @@ public class MainUI : UIBase
 		productCellDatas.Clear();
 		foreach(KeyValuePair<string, ProductData> kv in map)
 		{
+			kv.Value.SetUpdatedCallback(RecalcTotalProfit);
 			productCellDatas.Add(kv.Value);
 		}
 		ScrollView_products.AddCells(productCellDatas);
+		RecalcTotalProfit();
 	}
-	public void RecalcTotalProfit()
+	public void RecalcTotalProfit(object data = null)
 	{
 		int total = 0;
 		Dictionary<string, ProductData> map = DataManager.Instance.GetProductMap();
@@ -73,7 +75,6 @@ public class MainUI : UIBase
 	protected override void Awake()
 	{
 		base.Awake();
-		DataManager.Instance.Init();
 		bt_addProduct.SetTouchedCallback(TouchAddProduct);
 		ScrollView_products.SetCellTouchedCallback(TouchProductCellInScrollRect);
 		ScrollView_mtrl.SetCellTouchedCallback(TouchMtrlCellInScrollRect);

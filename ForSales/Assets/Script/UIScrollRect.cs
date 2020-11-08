@@ -17,8 +17,6 @@ public class UIScrollRect : ScrollRect
 	Vector2 scrollViewSize;
 	List<object> cellDatas;
 	float acceptScrollRange = 25f;
-	UnityEngine.EventSystems.PointerEventData lastEventData;
-	bool nowDragging;
 	List<UIScrollCellBase> createdCells;        // 그냥 생성된 모든 셀.
 	CallbackButton cellTouchedCallback;
 	bool init;
@@ -64,7 +62,6 @@ public class UIScrollRect : ScrollRect
 			mEndIndex = -1;
 		}
 
-
 		totalCellNum = Mathf.Max(0, (totalCell == -1 && null != cellDatas) ? cellDatas.Count : totalCell);
 		shownCells = new UIScrollCellBase[totalCellNum];
 		content.sizeDelta = CalcContentsSize();
@@ -89,7 +86,6 @@ public class UIScrollRect : ScrollRect
 	}
 	UIScrollCellBase PopFromPool()
 	{
-		//	Debug.Log ("cellPool.Count - 2 : " + cellPool.Count);
 		if (null != cellPool && cellPool.Count > 0)
 		{
 			UIScrollCellBase newCell = cellPool[0] as UIScrollCellBase;
@@ -186,24 +182,17 @@ public class UIScrollRect : ScrollRect
 		float viewSize = vertical ? scrollViewSize.y - cellStartPos.y : scrollViewSize.x - cellStartPos.x;
 		showCellNum = vertical ? Mathf.CeilToInt(viewSize / (GetCellHeight() + cellSpacing.y)) : Mathf.CeilToInt(viewSize / (GetCellWidth() + cellSpacing.x));
 		int poolNum = showCellNum + 2;          // 위 아래 1개씩 버퍼.
-		Debug.Log("poolNum : " + poolNum);
 		return poolNum;
 	}
 	public int GetDisplayCellNum()
 	{
 		return showCellNum;
 	}
-	void ResetDragData()
-	{
-		lastEventData = null;
-	}
+	
 	public override void OnBeginDrag(UnityEngine.EventSystems.PointerEventData eventData)
 	{
 		if (scrollBlock)
 			return;
-		ResetDragData();
-		lastEventData = null;
-		nowDragging = false;
 		eventData.position = eventData.pressPosition;
 		base.OnBeginDrag(eventData);
 		
@@ -217,16 +206,12 @@ public class UIScrollRect : ScrollRect
 		float xGap = Mathf.Abs(eventData.pressPosition.x - eventData.position.x);
 		float yGap = Mathf.Abs(eventData.pressPosition.y - eventData.position.y);
 		bool ok = vertical ? xGap < acceptScrollRange && yGap > acceptScrollRange : xGap > acceptScrollRange && yGap < acceptScrollRange;
-		if (ok)
-			nowDragging = true;
 	}
 	public override void OnEndDrag(UnityEngine.EventSystems.PointerEventData eventData)
 	{
-		nowDragging = false;
 		if (scrollBlock)
 			return;
 		base.OnEndDrag(eventData);
-		ResetDragData();
 	}
 	void CheckScrollPosition()
 	{
@@ -279,7 +264,6 @@ public class UIScrollRect : ScrollRect
 	}
 	void ClearCellDataRange(int startRank, int endRank)
 	{
-		//	Debug.LogError ("ClearCellDataRange - " + startRank + ", " + endRank);
 		if (null == shownCells || startRank < 0 || endRank < 0)
 			return;
 		for (int i = startRank; i <= endRank; i++)
@@ -294,7 +278,6 @@ public class UIScrollRect : ScrollRect
 
 	void FillCellData(int startRank, int endRank)
 	{
-		//Debug.LogError ("FillCellData - " + startRank + ", " + endRank);
 		for (int i = startRank; i <= endRank; i++)
 		{
 			UIScrollCellBase cell = PopFromPool();
@@ -303,25 +286,13 @@ public class UIScrollRect : ScrollRect
 				int rowIndex = 0;
 				int colIndex = 0;
 				if (vertical)
-				{
 					rowIndex = i;
-					//colIndex = 0;
-				}
 				else
-				{
-					//rowIndex = 0;
 					colIndex = i;
-				}
-				
-				float offsetY = 0;
-				
-				cell.transform.localPosition = new Vector3(GetCellWidth() * colIndex + cellStartPos.x, -(GetCellHeight() * rowIndex + cellStartPos.y + offsetY), 0);
-				
+				cell.transform.localPosition = new Vector3(GetCellWidth() * colIndex + cellStartPos.x, -(GetCellHeight() * rowIndex + cellStartPos.y), 0);
 				cell.transform.localScale = new Vector3(1, 1, 1);
-
 				shownCells[i] = cell;
 				SetOneCellData(i, cell);
-				//this.SendMessage("SetData", new ITEM_DATA(i, item), SendMessageOptions.DontRequireReceiver);
 			}
 		}
 	}

@@ -19,7 +19,7 @@ public class MaterialCell : UIScrollCellBase
 		cellData = (MaterialData)data;
 		mtrl_name.text = cellData.name;
 		prime_cost.text = string.Format("단가  : {0}", Definitions.NumberFormatPrice(cellData.prime_cost));
-		accrue_use_num.text = string.Format("총 소모 수량 : {0}개", cellData.useNum);
+		accrue_use_num.text = string.Format("총 소모 수량 : {0}개", cellData.GetUseNum());
 		has_num.text = cellData.RemainNum.ToString();
 
 	}

@@ -82,7 +82,7 @@ public class ProductRegisterPopup : UIBase
 		}
 		if (!alreadyHas)
 		{
-			ProductMaterialCell.CellData cellData = new ProductMaterialCell.CellData(data, 1, MaterialCellRefreshCallback, MaterialCellRemoveCallback);
+			ProductMaterialCell.CellData cellData = new ProductMaterialCell.CellData(data, 1, MaterialCellRemoveCallback, MaterialCellRefreshCallback);
 			selectedMaterialDatas.Add(cellData);
 		}
 		RefreshMaterialScrollView();
